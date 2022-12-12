@@ -30,5 +30,6 @@ if __name__ == '__main__':
     bom_url = "ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10753.xml"
     today = date.today()
     suburb = "Tullamarine"
-    outfile = f"{suburb}.{today.day}.{today.month}.{today.year}"
+    # this needs to change to a command line argument soon
+    outfile = f"/home/ubuntu/weather-forecast/weather-data/{suburb}.{today.day}.{today.month}.{today.year}"
     scrape(bom_url, outfile, suburb)
