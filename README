@@ -1,0 +1,6 @@
+This is a personal project to study the accuracy of the Australian Burea of Meteorology's 7 day forecast data.
+This project will be studying metrics such as the difference between predictions and actual weather data as reported on the day by the BOM.
+The project is not meant in any way to influence perception of the Bureau's data. This would be well outside the scope of this project.
+The only purpose is to allow me to personally assess the forecast data to see how much I can rely on it as an advance prediction.
+
+Having made this disclaimer, the intent of this project is to keep a daily record of the data for my local weather station, provided through the BOM's anonymous public API. I will be using Python to perform comparisons to show the change over 7 days of predictions of temperature, rainfull and chance of precipitation.
