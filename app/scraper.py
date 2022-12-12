@@ -16,6 +16,10 @@ def scrape(url, outfile, suburb):
 
     local_data = str(data.find("area", description=suburb))
 
+    if not local_data:
+        # implement error logging and notification
+        return
+
     with open(outfile, "w") as f:
         f.write(local_data)
 
