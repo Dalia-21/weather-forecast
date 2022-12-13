@@ -12,7 +12,6 @@ def scrape(url, outfile, suburb, logger):
     in the chosen suburb, and write it to the
     specified file."""
 
-    data = ""
     try:
         with closing(urllib.request.urlopen(url)) as download:
             data = BeautifulSoup(download, "xml")
