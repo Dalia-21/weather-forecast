@@ -18,9 +18,12 @@ def scrape(url, outfile, suburb, logger):
             data = BeautifulSoup(download, "xml")
     except urllib.error.URLError:
         logger.error("Bad URL: request failed")
+        return
 
     if not data:
         logger.error("XML data not obtained from site")
+        return
+
     local_data = str(data.find("area", description=suburb))
 
     if not local_data:
