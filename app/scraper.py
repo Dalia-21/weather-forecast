@@ -41,7 +41,7 @@ if __name__ == '__main__':
     today = date.today()
     # All this needs to move to a config file
     suburb = "Tullamarine"
-    logging_file = "/home/ubuntu/weather-forecast/weather-data/logs/weather.log"
+    logging_file = "/home/ubuntu/weather-forecast/logs/weather.log"
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(filename=logging_file, format=log_format, level=logging.ERROR)
     error_logger = logging.getLogger()
