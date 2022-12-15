@@ -4,6 +4,7 @@ import urllib.error
 from contextlib import closing
 from datetime import date
 import logging
+import configparser
 
 
 def scrape(url, outfile, suburb, logger):
@@ -38,15 +39,16 @@ def scrape(url, outfile, suburb, logger):
 
 
 if __name__ == '__main__':
-    # need to check if this filename changes and potentially scrape new url each day
-    bom_url = "ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10753.xml"
+
+    parser = configparser.ConfigParser()
+    parser.read('ftp-config.cfg')
     today = date.today()
-    # All this needs to move to a config file
-    suburb = "Tullamarine"
-    logging_file = "/home/ubuntu/weather-forecast/logs/weather.log"
+    bom_url = parser['FTP']['Url']
+    suburb = parser['FTP']['Suburb']
+    logging_file = parser['Settings']['LogFile']
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(filename=logging_file, format=log_format, level=logging.ERROR)
     error_logger = logging.getLogger()
-    # this needs to change to a command line argument soon
-    outfile = f"/home/ubuntu/weather-forecast/weather-data/{suburb}.{today.day}.{today.month}.{today.year}"
+    output_dir = parser['FTP']['OutputDir']
+    outfile = f"{output_dir}{suburb}.{today.day}.{today.month}.{today.year}"
     scrape(bom_url, outfile, suburb, error_logger)
