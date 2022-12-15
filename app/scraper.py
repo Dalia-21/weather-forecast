@@ -38,7 +38,7 @@ def scrape(url, outfile, suburb, logger):
         logger.error("File not found: no data was recorded")
 
 
-def get_config(config_file, logfile=None, log_level=logging.ERROR):
+def get_config(config_file, log_level=logging.ERROR):
     """Takes path to a config file and optionally a logging level
     and returns a dictionary of values to pass to the scrape function."""
 
@@ -63,8 +63,7 @@ def get_config(config_file, logfile=None, log_level=logging.ERROR):
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument("config_filename")
-    arg_parser.add_argument("-l", "--logfile")
     args = arg_parser.parse_args()
     config_filename = args.config_filename or '/home/ubuntu/weather-forecast/app/ftp-config.cfg'
-    s_vars = get_config(config_filename, args.logfile)
+    s_vars = get_config(config_filename)
     scrape(s_vars['url'], s_vars['outfile'], s_vars['suburb'], s_vars['logger'])
