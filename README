@@ -4,5 +4,7 @@ The purpose of the project is to allow me to personally assess the forecast data
 While others can clone this code and perform their own studies, the intent of this project is solely for personal use.
 
 Having made this disclaimer, the intent of this project is to keep a daily record of the data for my local weather station, provided through the BOM's anonymous public API. I will be using Python to perform comparisons to show the change over 7 days of predictions of temperature, rainfull and chance of precipitation.
-
 Due to copyright restrictions on BOM data, the results will only be viewable by me through an authenticated web interface. In order to see similar results, others will need to replicate this study themselves.
+
+Program structure so far consists of a config file and the main scraper function. The config contains the link to the BOM API, together with the parameters required to get the data for my local area and save it to the server on which the script is running.
+Config follows the standard format for integrating with the config parser in Python. The necessary parameters can be seen in the scraper file, and the URL can be obtained from the 'precis' section of the BOM API.
