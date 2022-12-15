@@ -49,7 +49,7 @@ def get_config(config_file, log_level=logging.ERROR):
     today = date.today()
     outfile = f"{output_dir}{suburb}.{today.day}.{today.month}.{today.year}"
     log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    log_file = logfile or parser['Settings']['LogFile']
+    log_file = parser['Settings']['LogFile']
     logging.basicConfig(filename=log_file, format=log_format, level=log_level)
     logger = logging.getLogger()
     scrape_vars = dict()
