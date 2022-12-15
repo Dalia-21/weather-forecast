@@ -5,6 +5,7 @@ from contextlib import closing
 from datetime import date
 import logging
 import configparser
+import argparse
 
 
 def scrape(url, outfile, suburb, logger):
@@ -26,7 +27,7 @@ def scrape(url, outfile, suburb, logger):
 
     local_data = str(data.find("area", description=suburb))
 
-    if not local_data:
+    if local_data == 'None':
         logger.error("Data for suburb not found or data format not as expected")
         return
 
@@ -37,18 +38,32 @@ def scrape(url, outfile, suburb, logger):
         logger.error("File not found: no data was recorded")
 
 
-
-if __name__ == '__main__':
+def get_config(config_file, log_level=logging.ERROR):
+    """Takes path to a config file and optionally a logging level
+    and returns a dictionary of values to pass to the scrape function."""
 
     parser = configparser.ConfigParser()
-    parser.read('ftp-config.cfg')
-    today = date.today()
-    bom_url = parser['FTP']['Url']
-    suburb = parser['FTP']['Suburb']
-    logging_file = parser['Settings']['LogFile']
-    log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    logging.basicConfig(filename=logging_file, format=log_format, level=logging.ERROR)
-    error_logger = logging.getLogger()
+    parser.read(config_file)
     output_dir = parser['FTP']['OutputDir']
+    suburb = parser['FTP']['Suburb']
+    today = date.today()
     outfile = f"{output_dir}{suburb}.{today.day}.{today.month}.{today.year}"
-    scrape(bom_url, outfile, suburb, error_logger)
+    log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    log_file = parser['Settings']['LogFile']
+    logging.basicConfig(filename=log_file, format=log_format, level=log_level)
+    logger = logging.getLogger()
+    scrape_vars = dict()
+    scrape_vars['url'] = parser['FTP']['Url']
+    scrape_vars['suburb'] = suburb
+    scrape_vars['outfile'] = outfile
+    scrape_vars['logger'] = logger
+    return scrape_vars
+
+
+if __name__ == '__main__':
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("config_filename")
+    args = arg_parser.parse_args()
+    config_filename = args.config_filename or '/home/ubuntu/weather-forecast/app/ftp-config.cfg'
+    s_vars = get_config(config_filename)
+    scrape(s_vars['url'], s_vars['outfile'], s_vars['suburb'], s_vars['logger'])
