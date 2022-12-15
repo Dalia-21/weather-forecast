@@ -62,7 +62,7 @@ def get_config(config_file, log_level=logging.ERROR):
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("config_filename")
+    arg_parser.add_argument("-c", "--config_filename")
     args = arg_parser.parse_args()
     config_filename = args.config_filename or '/home/ubuntu/weather-forecast/app/ftp-config.cfg'
     s_vars = get_config(config_filename)
