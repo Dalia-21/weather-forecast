@@ -1,5 +1,7 @@
 <title>Weather Data</title>
 <h1>Saved Weather Files</h1>
+
 {% for file in files %}
-    <l1>{{ file }}</l1>
+    {% set file_url = file.split('.')[1] + '-' + file.split('.')[2] + '-' + file.split('.')[3] %}
+    <a href="{{ url_for('view_file', file_url=file_url) }}">{{ file }}</a>
 {% endfor %}
