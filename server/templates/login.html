@@ -1,4 +1,9 @@
 <h1>Sign In</h1>
+
+{% for message in get_flashed_messages() %}
+  <p style="color: green;">{{ message }}</p>
+{% endfor %}
+
 <form action="", method="post">
   {{ form.hidden_tag() }}
   <p>{{form.user_name.label}}<br>

@@ -1,5 +1,12 @@
 <h1>{{ filename }}</h1>
-<a href="{{ url_for('main.index') }}">Return Home</a>
+
+{% for message in get_flashed_messages() %}
+  <p style="color: green;">{{ message }}</p>
+{% endfor %}
+
+<a href="{{ url_for('main.index') }}">Return Home</a><br>
+<a href="{{ url_for('main.logout') }}">Logout</a><br>
+
 {% for period in data.area.find_all('forecast-period') %}
     <p>{{ period.attrs['start-time-local'] }}</p>
     <p>Min: {{ period.find('element', type='air_temperature_minimum').string }}</p>

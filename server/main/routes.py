@@ -50,9 +50,8 @@ def login():
 @bp.route('/logout')
 @login_required
 def logout():
-    form = LoginForm()
     logout_user()
-    return render_template('login.html', form=form)
+    return redirect(url_for('main.login'))
 
 
 @login_manager.user_loader
