@@ -14,7 +14,7 @@ from server import login_manager
 @login_required
 def index():
     # I want to shift this to config at some point, maybe make it an attribute of app
-    files = os.listdir('/home/dalia/coding/weather-forecast/weather-data')
+    files = os.listdir('/home/ubuntu/weather-forecast/weather-data')
     return render_template('index.html', files=files)
 
 
