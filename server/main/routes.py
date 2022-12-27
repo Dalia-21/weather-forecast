@@ -1,7 +1,12 @@
-from flask import render_template
+from flask import render_template, url_for, abort, flash, \
+    request, redirect, current_app
 import os
-from server.main import bp
+from server.main.main import bp
 from bs4 import BeautifulSoup
+from server.main.forms import LoginForm
+from werkzeug.security import check_password_hash
+from server.main.models import User
+from flask_login import login_user, logout_user
 
 
 @bp.route('/')
@@ -27,4 +32,13 @@ def view_file(file_url):
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        login_user(user)
+        user = User.query.filter_by(username=form.user_name.data).first()
+        if check_password_hash(user.password_hash, form.password.data):
+            login_user(user)
+            flash(f"Welcome {user.username}")
+        else:
+            flash('Invalid username or password')
+            return render_template('login.html', form=form)
+
+        return redirect(url_for('main.index'))
+    return render_template('login.html', form=form)
