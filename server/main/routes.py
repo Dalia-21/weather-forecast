@@ -25,7 +25,7 @@ def view_file(file_url):
     # [except FileNotFoundError]
     filename = "Tullamarine." + file_url.split('-')[0] + '.' +\
                file_url.split('-')[1] + '.' + file_url.split('-')[2]
-    full_file_path = "/home/dalia/coding/weather-forecast/weather-data/"
+    full_file_path = "/home/ubuntu/weather-forecast/weather-data/"
     with open(full_file_path + filename, 'r') as f:
         data = BeautifulSoup(f, "xml")
     return render_template('weather_file.html', filename=filename, data=data)
