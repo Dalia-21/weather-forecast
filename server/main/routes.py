@@ -21,3 +21,10 @@ def view_file(file_url):
     with open(full_file_path + filename, 'r') as f:
         data = BeautifulSoup(f, "xml")
     return render_template('weather_file.html', filename=filename, data=data)
+
+
+@bp.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        login_user(user)
