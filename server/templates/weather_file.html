@@ -1,0 +1,9 @@
+<h1>{{ filename }}</h1>
+<a href="{{ url_for('main.index') }}">Return Home</a>
+{% for period in data.area.find_all('forecast-period') %}
+    <p>{{ period.attrs['start-time-local'] }}</p>
+    <p>Min: {{ period.find('element', type='air_temperature_minimum').string }}</p>
+    <p>Max: {{ period.find('element', type='air_temperature_maximum').string }}</p>
+    <p>Rainfall: {{ period.find('text', type='probability_of_precipitation').string }}</p>
+    <p>Description: {{ period.find('text', type='precis').string }}</p>
+{% endfor %}
