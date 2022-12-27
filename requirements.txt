@@ -3,3 +3,5 @@ lxml==4.9.1
 soupsieve==2.3.2.post1
 
 Flask~=2.2.2
+WTForms~=3.0.1
+Werkzeug~=2.2.2

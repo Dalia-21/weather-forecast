@@ -1,15 +1,17 @@
-from flask import render_template, url_for, abort, flash, \
-    request, redirect, current_app
+from flask import render_template, url_for, flash, redirect
 import os
-from server.main.main import bp
 from bs4 import BeautifulSoup
-from server.main.forms import LoginForm
+from flask_login import login_user, logout_user, login_required
 from werkzeug.security import check_password_hash
+
+from server.main.main import bp
+from server.main.forms import LoginForm
 from server.main.models import User
-from flask_login import login_user, logout_user
+from server import login_manager
 
 
 @bp.route('/')
+@login_required
 def index():
     # I want to shift this to config at some point, maybe make it an attribute of app
     files = os.listdir('/home/dalia/coding/weather-forecast/weather-data')
@@ -17,6 +19,7 @@ def index():
 
 
 @bp.route('/<file_url>')
+@login_required
 def view_file(file_url):
     # Add check that file actually exists and implement 404
     # [except FileNotFoundError]
@@ -42,3 +45,16 @@ def login():
 
         return redirect(url_for('main.index'))
     return render_template('login.html', form=form)
+
+
+@bp.route('/logout')
+@login_required
+def logout():
+    form = LoginForm()
+    logout_user()
+    return render_template('login.html', form=form)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
