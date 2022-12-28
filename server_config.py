@@ -1,5 +1,9 @@
 import os
+from dotenv import dotenv_values
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+env = dotenv_values(basedir + '.env')
 
 
 class Config(object):
@@ -8,3 +12,7 @@ class Config(object):
         'sqlite:///' + os.path.join(basedir, 'server.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BASEDIR = basedir
+    if env:
+        DEBUG_MODE = env['FLASK_DEBUG']
+    else:
+        DEBUG_MODE = False
