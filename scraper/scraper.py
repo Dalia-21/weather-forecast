@@ -5,7 +5,7 @@ from contextlib import closing
 from datetime import date
 import logging
 import configparser
-import argparse
+import os
 
 
 def scrape(url, outfile, suburb, logger):
@@ -61,9 +61,7 @@ def get_config(config_file, log_level=logging.ERROR):
 
 
 if __name__ == '__main__':
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("-c", "--config_filename")
-    args = arg_parser.parse_args()
-    config_filename = args.config_filename or '/home/ubuntu/weather-forecast/scraper/ftp-config.cfg'
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    config_filename = basedir + "/ftp-config.cfg"
     s_vars = get_config(config_filename)
     scrape(s_vars['url'], s_vars['outfile'], s_vars['suburb'], s_vars['logger'])
