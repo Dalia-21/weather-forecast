@@ -19,9 +19,9 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     app.register_error_handler(404, page_not_found)
 
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
+    log_file = app.config['BASEDIR'] + "/logs/server_error.log"
+    log_format = f'%(asctime)s %(levelname)s %(name)s : %(message)s'
+    logging.basicConfig(filename=log_file, format=log_format)
 
     db.init_app(app)
     migrate.init_app(app, db)
