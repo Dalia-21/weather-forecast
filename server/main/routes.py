@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, current_app
 import os
 from bs4 import BeautifulSoup
 from flask_login import login_user, logout_user, login_required
@@ -13,8 +13,9 @@ from server import login_manager
 @bp.route('/')
 @login_required
 def index():
+
     # I want to shift this to config at some point, maybe make it an attribute of app
-    files = os.listdir('/home/ubuntu/weather-forecast/weather-data')
+    files = os.listdir(current_app.config['BASEDIR'] + '/weather-data')
     return render_template('index.html', files=files)
 
 
@@ -25,7 +26,7 @@ def view_file(file_url):
     # [except FileNotFoundError]
     filename = "Tullamarine." + file_url.split('-')[0] + '.' +\
                file_url.split('-')[1] + '.' + file_url.split('-')[2]
-    full_file_path = "/home/ubuntu/weather-forecast/weather-data/"
+    full_file_path = current_app.config['BASEDIR'] + "/weather-data/"
     with open(full_file_path + filename, 'r') as f:
         data = BeautifulSoup(f, "xml")
     return render_template('weather_file.html', filename=filename, data=data)
