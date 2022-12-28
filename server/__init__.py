@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -10,10 +10,14 @@ db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.register_error_handler(404, page_not_found)
 
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
