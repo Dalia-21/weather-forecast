@@ -14,7 +14,9 @@ from server import login_manager
 @bp.route('/')
 @login_required
 def index():
+    current_app.logger.info("Collecting files for homepage.")
     files = os.listdir(current_app.config['BASEDIR'] + '/weather-data')
+    current_app.logger.debug(f"File list: {files}")
     return render_template('index.html', files=files)
 
 
@@ -23,14 +25,17 @@ def index():
 def view_file(file_url):
     # All file_urls follow the format 'dd-dd-dddd'
     if len(file_url.split('-')) != 3:
+        current_app.logger.warning(f"404: attempted to access {file_url}")
         abort(404)
     filename = "Tullamarine." + file_url.split('-')[0] + '.' +\
                file_url.split('-')[1] + '.' + file_url.split('-')[2]
     full_file_path = current_app.config['BASEDIR'] + "/weather-data/"
+    current_app.logger.debug(f"Path to weather files: {full_file_path}")
     if not os.path.exists(full_file_path + filename):
         abort(404)
     with open(full_file_path + filename, 'r') as f:
         data = BeautifulSoup(f, "xml")
+    current_app.logger.debug(data)
     return render_template('weather_file.html', filename=filename, data=data)
 
 
@@ -38,11 +43,13 @@ def view_file(file_url):
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        current_app.logger.debug(f"{form.user_name.data} attempting to login.")
         user = User.query.filter_by(username=form.user_name.data).first()
-        if check_password_hash(user.password_hash, form.password.data):
+        if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user)
             flash(f"Welcome {user.username}")
         else:
+            current_app.logger.warning(f"{form.user_name.data} attempted to access the site.")
             flash('Invalid username or password')
             return render_template('login.html', form=form)
 
