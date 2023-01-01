@@ -3,7 +3,7 @@ from dotenv import dotenv_values
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-env = dotenv_values(basedir + '.env')
+env = dotenv_values(os.path.join(basedir, '.env'))
 
 
 class Config(object):
@@ -13,6 +13,6 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BASEDIR = basedir
     if env:
-        DEBUG_MODE = env['FLASK_DEBUG']
+        DEBUG_MODE = bool(env['FLASK_DEBUG'])
     else:
         DEBUG_MODE = False

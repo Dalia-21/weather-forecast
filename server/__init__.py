@@ -19,13 +19,15 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     app.register_error_handler(404, page_not_found)
 
-    log_file = app.config['BASEDIR'] + "/logs/server_error.log"
     log_format = f'%(asctime)s %(levelname)s %(name)s : %(message)s'
     if app.config['DEBUG_MODE']:
         log_level = logging.DEBUG
-    else:
+        log_file = None
+    elif not app.config['DEBUG_MODE']:
         log_level = logging.ERROR
+        log_file = app.config['BASEDIR'] + "/logs/server_error.log"
 
+    print(app.config['DEBUG_MODE'], log_level, log_file)
     logging.basicConfig(filename=log_file, level=log_level, format=log_format)
 
     db.init_app(app)
