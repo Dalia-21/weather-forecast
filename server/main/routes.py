@@ -15,7 +15,7 @@ from server import login_manager
 @login_required
 def index():
     current_app.logger.info("Collecting files for homepage.")
-    files = os.listdir(current_app.config['BASEDIR'] + '/weather-data')
+    files = os.listdir(os.path.join(current_app.config['BASEDIR'], 'weather-data'))
     current_app.logger.debug(f"File list: {files}")
     return render_template('index.html', files=files)
 
@@ -31,9 +31,10 @@ def view_file(file_url):
                file_url.split('-')[1] + '.' + file_url.split('-')[2]
     full_file_path = current_app.config['BASEDIR'] + "/weather-data/"
     current_app.logger.debug(f"Path to weather files: {full_file_path}")
-    if not os.path.exists(full_file_path + filename):
+    full_file_name = os.path.join(full_file_path, filename)
+    if not os.path.exists(full_file_name):
         abort(404)
-    with open(full_file_path + filename, 'r') as f:
+    with open(full_file_name, 'r') as f:
         data = BeautifulSoup(f, "xml")
     current_app.logger.debug(data)
     return render_template('weather_file.html', filename=filename, data=data)
