@@ -33,6 +33,7 @@ def view_file(file_url):
     current_app.logger.debug(f"Path to weather files: {full_file_path}")
     full_file_name = os.path.join(full_file_path, filename)
     if not os.path.exists(full_file_name):
+        current_app.logger.warning(f"404: attempted to access {file_url}")
         abort(404)
     with open(full_file_name, 'r') as f:
         data = BeautifulSoup(f, "xml")
