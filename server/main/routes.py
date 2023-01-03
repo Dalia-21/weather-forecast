@@ -9,6 +9,7 @@ from server.main.main import bp
 from server.main.forms import LoginForm
 from server.main.models import User
 from server import login_manager
+import re
 
 
 @bp.route('/')
@@ -24,8 +25,9 @@ def index():
 @login_required
 def view_file(file_url):
     # All file_urls follow the format 'dd-dd-dddd'
-    if len(file_url.split('-')) != 3:
-        current_app.logger.warning(f"404: attempted to access {file_url}")
+    pattern = "\d{2}-\d{2}-\d{4}\Z"
+    if not re.match(pattern, file_url):
+        current_app.logger.warning(f"404 bad pattern: attempted to access {file_url}")
         abort(404)
     filename = "Tullamarine." + file_url.split('-')[0] + '.' +\
                file_url.split('-')[1] + '.' + file_url.split('-')[2]
@@ -33,7 +35,7 @@ def view_file(file_url):
     current_app.logger.debug(f"Path to weather files: {full_file_path}")
     full_file_name = os.path.join(full_file_path, filename)
     if not os.path.exists(full_file_name):
-        current_app.logger.warning(f"404: attempted to access {file_url}")
+        current_app.logger.warning(f"404 file not found: attempted to access {file_url}")
         abort(404)
     with open(full_file_name, 'r') as f:
         data = BeautifulSoup(f, "xml")
