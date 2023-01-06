@@ -2,8 +2,7 @@
 in the weather files."""
 from xml_tools import get_files, get_xml
 from datetime import datetime
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+import plotly.graph_objects as go
 
 
 class WeatherEntry:
@@ -101,9 +100,6 @@ for obj in weather_objects.values():
             lowest_index += 1
     y_data.append(obj.indexes[str(lowest_index)][weather_variable] - obj.indexes[str(highest_index)]['max_temp'])
 
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))
-plt.grid(True)
-plt.plot(x_data, y_data)
-plt.gcf().autofmt_xdate()
-plt.show()
+
+fig = go.Figure([go.Scatter(x=x_data, y=y_data)])
+fig.show()
