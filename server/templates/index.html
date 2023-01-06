@@ -8,6 +8,6 @@
 <a href="{{ url_for('main.logout') }}">Logout</a><br>
 
 {% for file in files %}
-    {% set file_url = file.split('.')[1] + '-' + file.split('.')[2] + '-' + file.split('.')[3] %}
+    {% set file_url = file[file.index('.')+1:].replace('.', '-') %}
     <a href="{{ url_for('main.view_file', file_url=file_url) }}">{{ file }}</a>
 {% endfor %}

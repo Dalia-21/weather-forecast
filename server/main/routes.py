@@ -1,22 +1,22 @@
 from flask import render_template, url_for, flash, redirect,\
     current_app, abort
 import os
-from bs4 import BeautifulSoup
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import check_password_hash
+import re
 
 from server.main.main import bp
 from server.main.forms import LoginForm
 from server.main.models import User
 from server import login_manager
-import re
+from scraper.xml_tools import get_files, get_xml
 
 
 @bp.route('/')
 @login_required
 def index():
     current_app.logger.info("Collecting files for homepage.")
-    files = os.listdir(os.path.join(current_app.config['BASEDIR'], 'weather-data'))
+    files = get_files(names_only=True)
     current_app.logger.debug(f"File list: {files}")
     return render_template('index.html', files=files)
 
@@ -24,22 +24,21 @@ def index():
 @bp.route('/<file_url>')
 @login_required
 def view_file(file_url):
-    # All file_urls follow the format 'dd-dd-dddd'
-    pattern = "\d{2}-\d{2}-\d{4}\Z"
+    # All file_urls follow the format 'dd-dd-dddd' (only 1 d for single digit dates)
+    pattern = "\d{1,2}-\d{1,2}-\d{4}\Z"
     if not re.match(pattern, file_url):
         current_app.logger.warning(f"404 bad pattern: attempted to access {file_url}")
         abort(404)
-    filename = "Tullamarine." + file_url.split('-')[0] + '.' +\
-               file_url.split('-')[1] + '.' + file_url.split('-')[2]
-    full_file_path = current_app.config['BASEDIR'] + "/weather-data/"
-    current_app.logger.debug(f"Path to weather files: {full_file_path}")
-    full_file_name = os.path.join(full_file_path, filename)
+
+    filename = current_app.config['DATA_SUBURB'] + '.' + file_url.replace('-', '.')
+    current_app.logger.debug(f"Calling scraper.xml_tools.get_files with file {filename}")
+    full_file_name = get_files(filename=filename)
     if not os.path.exists(full_file_name):
         current_app.logger.warning(f"404 file not found: attempted to access {file_url}")
         abort(404)
-    with open(full_file_name, 'r') as f:
-        data = BeautifulSoup(f, "xml")
-    current_app.logger.debug(data)
+
+    data = get_xml(full_file_name)
+    current_app.logger.debug(f"First data field: {data.area.find('forecast-period')}")
     return render_template('weather_file.html', filename=filename, data=data)
 
 

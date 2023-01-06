@@ -7,3 +7,9 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255))
     password_hash = db.Column(db.String(255))
+
+
+class WeatherEntry(db.Model):
+    __tablename__ = 'weather_entries'
+    id = db.Column(db.Integer, primary_key=True)
+    entry_date = db.Column(db.String(255))
