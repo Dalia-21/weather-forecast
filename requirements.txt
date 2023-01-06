@@ -5,3 +5,7 @@ soupsieve==2.3.2.post1
 Flask~=2.2.2
 WTForms~=3.0.1
 Werkzeug~=2.2.2
+matplotlib~=3.6.2
+alembic~=1.9.1
+SQLAlchemy~=1.4.45
+python-dotenv~=0.21.0
