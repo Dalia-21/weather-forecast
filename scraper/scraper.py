@@ -1,11 +1,12 @@
+import logging
+
 from bs4 import BeautifulSoup
 import urllib.request
 import urllib.error
 from contextlib import closing
-from datetime import date
-import logging
-import configparser
 import os
+from scraping_tools import get_config
+import argparse
 
 
 def scrape(url, outfile, suburb, logger):
@@ -14,6 +15,7 @@ def scrape(url, outfile, suburb, logger):
     in the chosen suburb, and write it to the
     specified file."""
 
+    logger.debug(f"Vars: {url}, {outfile}, {suburb}")
     try:
         with closing(urllib.request.urlopen(url)) as download:
             data = BeautifulSoup(download, "xml")
@@ -38,30 +40,13 @@ def scrape(url, outfile, suburb, logger):
         logger.error("File not found: no data was recorded")
 
 
-def get_config(config_file, log_level=logging.ERROR):
-    """Takes path to a config file and optionally a logging level
-    and returns a dictionary of values to pass to the scrape function."""
-
-    parser = configparser.ConfigParser()
-    parser.read(config_file)
-    output_dir = parser['FTP']['OutputDir']
-    suburb = parser['FTP']['Suburb']
-    today = date.today()
-    outfile = f"{output_dir}{suburb}.{today.day}.{today.month}.{today.year}"
-    log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    log_file = parser['Settings']['LogFile']
-    logging.basicConfig(filename=log_file, format=log_format, level=log_level)
-    logger = logging.getLogger()
-    scrape_vars = dict()
-    scrape_vars['url'] = parser['FTP']['Url']
-    scrape_vars['suburb'] = suburb
-    scrape_vars['outfile'] = outfile
-    scrape_vars['logger'] = logger
-    return scrape_vars
-
-
 if __name__ == '__main__':
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    config_filename = basedir + "/ftp-config.cfg"
-    s_vars = get_config(config_filename)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--debug", action="store_true")
+    args = parser.parse_args()
+    if args.debug:
+        log_level = logging.DEBUG
+    else:
+        log_level = logging.ERROR
+    s_vars = get_config(config_file="scrape-config.cfg", log_level=log_level)
     scrape(s_vars['url'], s_vars['outfile'], s_vars['suburb'], s_vars['logger'])
