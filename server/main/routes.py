@@ -9,7 +9,7 @@ from server.main.main import bp
 from server.main.forms import LoginForm
 from server.main.models import User
 from server import login_manager
-from scraper.xml_tools import get_files, get_xml
+from scraper.scraping_tools import get_files, get_xml
 
 
 @bp.route('/')
