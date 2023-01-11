@@ -1,11 +1,12 @@
 """Temporary utility for visualising the data contained
 in the weather files."""
-from xml_tools import get_files, get_xml
+from scraping_tools import get_files, get_xml
 from datetime import datetime
 import plotly.graph_objects as go
 
 
 class WeatherEntry:
+    # make a method that returns the date and all the entries of one data type
     def __init__(self, entry_date):
         self.date = entry_date
         self.indexes = dict()
@@ -87,6 +88,9 @@ weather_variable = 'max_temp'
 x_data = []
 y_data = []
 for obj in weather_objects.values():
+    delta = datetime.today() - obj.date
+    if delta.days < 7:
+        continue
     x_data.append(obj.date)
     highest_index = obj.highest_index
     while not obj.indexes[str(highest_index)][weather_variable] and highest_index > obj.lowest_index:
