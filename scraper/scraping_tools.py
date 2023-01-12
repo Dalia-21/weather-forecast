@@ -21,22 +21,27 @@ def get_xml(file):
         return BeautifulSoup(f, "xml")
 
 
+def get_logger(log_level=logging.ERROR, logfile="/home/dalia/coding/weather-forecast/logs/weather.log"):
+    log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    if log_level == logging.DEBUG:
+        log_file = None
+    else:
+        log_file = logfile
+    logging.basicConfig(filename=log_file, format=log_format, level=log_level)
+    return logging.getLogger()
+
+
 def get_config(config_file="scrape-config.cfg", log_level=logging.ERROR, option="all"):
     basedir = os.path.abspath(os.path.dirname(__file__))
     parser = configparser.ConfigParser()
     parser.read(basedir + "/" + config_file)
 
     config_vars = dict()
-    log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    if log_level == logging.DEBUG:
-        log_file = None
-    else:
-        log_file = parser['Settings']['LogFile']
-    logging.basicConfig(filename=log_file, format=log_format, level=log_level)
-    logger = logging.getLogger()
-    config_vars['logger'] = logger
-    config_vars['db'] = parser['DB']['DB_URI']
+    config_vars['logger'] = get_logger(log_level=log_level, logfile=parser['Settings']['LogFile'])
+    if option=="logging":
+        return config_vars
 
+    config_vars['db'] = parser['DB']['DB_URI']
     if option == "db":
         return config_vars
 
