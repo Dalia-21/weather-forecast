@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 import urllib.request
 import urllib.error
 from contextlib import closing
+
+from db_tools import add_entries_to_db
 from scraping_tools import get_config
 import argparse
 
@@ -51,3 +53,4 @@ if __name__ == '__main__':
         log_level = logging.ERROR
     s_vars = get_config(config_file="scrape-config.cfg", log_level=log_level)
     scrape(s_vars['url'], s_vars['outfile'], s_vars['suburb'], s_vars['logger'])
+    add_entries_to_db(filename=s_vars['outfile'])
