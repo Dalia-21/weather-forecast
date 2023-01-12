@@ -136,6 +136,26 @@ def process_entries(period):
                  f"chance_of_rain {chance_of_rain} for index {index}, date {date}.")
 
 
+def delete_table_entries(table):
+    global session
+    entries = session.query(table).all()
+    for entry in entries:
+        if entry.oldest_data is None or entry.latest_data is None:
+            delta = datetime.today() - entry.date
+            if delta.days >= 0:
+                logger.debug(f"Deleting entry for date {entry.date} from table {table}")
+                session.delete(entry)
+                session.commit()
+
+def delete_entries(table=None):
+    if table:
+        delete_table_entries(table)
+    else:
+        for table in [MaxTempEntry, MinTempEntry, RainfallEntry, ChanceOfRainEntry]:
+            delete_table_entries(table)
+
+
 if __name__ == '__main__':
     logger.debug("Calling main db loop function.")
     add_entries_to_db()
+    session.close()

@@ -105,5 +105,29 @@ for obj in weather_objects.values():
     y_data.append(obj.indexes[str(lowest_index)][weather_variable] - obj.indexes[str(highest_index)]['max_temp'])
 
 
-fig = go.Figure([go.Scatter(x=x_data, y=y_data)])
+from db_models import MaxTempEntry, MinTempEntry, RainfallEntry, ChanceOfRainEntry
+from db_connection import get_session
+
+
+session = get_session()
+data_type = input("Datatype: [maxtemp, mintemp, rainfall, chanceofrain] ")
+if data_type == "maxtemp":
+    table = MaxTempEntry
+elif data_type == "mintemp":
+    table = MinTempEntry
+elif data_type == "rainfall":
+    table = RainfallEntry
+elif data_type == "chanceofrain":
+    table = ChanceOfRainEntry
+else:
+    print("Input not understood. Terminating now.")
+    exit()
+
+entries = session.query(table).order_by(table.date).all()
+dates = [entry.date for entry in entries[:-6]]
+data = [entry.latest_data - entry.oldest_data for entry in entries[:-6]]
+
+fig = go.Figure([go.Scatter(x=dates, y=data)])
 fig.show()
+
+session.close()
