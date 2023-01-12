@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, DateTime, String, ForeignKey
-from db_connection import get_engine
+from scraper.db_connection import get_engine
 
 
 engine = get_engine()

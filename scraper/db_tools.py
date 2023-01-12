@@ -1,12 +1,12 @@
 import logging
-from scraping_tools import get_logger
+from scraper.scraping_tools import get_logger
 logger = get_logger(log_level=logging.DEBUG)
 
-from db_connection import get_session
-from db_models import MaxTempEntry, MinTempEntry, RainfallEntry,\
+from scraper.db_connection import get_session
+from scraper.db_models import MaxTempEntry, MinTempEntry, RainfallEntry,\
     ChanceOfRainEntry, ProcessedFiles
 from datetime import datetime
-from scraping_tools import get_files, get_xml
+from scraper.scraping_tools import get_files, get_xml
 
 
 session = get_session()
