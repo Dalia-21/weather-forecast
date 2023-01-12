@@ -10,6 +10,10 @@ from server.main.forms import LoginForm
 from server.main.models import User
 from server import login_manager
 from scraper.scraping_tools import get_files, get_xml
+from server import Session
+from scraper.db_tools import get_table_type
+import plotly.graph_objects as go
+from plotly.offline import plot
 
 
 @bp.route('/')
@@ -42,12 +46,24 @@ def view_file(file_url):
     return render_template('weather_file.html', filename=filename, data=data)
 
 
+@bp.route('/graphs/<data_type>', methods=['GET', 'POST'])
+@login_required
+def view_graph(data_type):
+    table = get_table_type(data_type)
+    entries = Session.query(table).order_by(table.date).all()
+    dates = [entry.date for entry in entries[:-6]]
+    data = [entry.latest_data - entry.oldest_data for entry in entries[:-6]]
+    fig = go.Figure([go.Scatter(x=dates, y=data)])
+    html_figure = plot(fig, include_plotlyjs=True, output_type='div')
+    return render_template('graphs/graph.html', html_figure=html_figure)
+
+
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
         current_app.logger.debug(f"{form.user_name.data} attempting to login.")
-        user = User.query.filter_by(username=form.user_name.data).first()
+        user = Session.query(User).filter_by(username=form.user_name.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
             login_user(user)
             flash(f"Welcome {user.username}")
@@ -69,4 +85,4 @@ def logout():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    return Session.query(User).get(user_id)
