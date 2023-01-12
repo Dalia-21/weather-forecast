@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from scraping_tools import get_config
 import logging
 
@@ -17,6 +17,6 @@ def get_engine():
 
 def get_session():
     engine = get_engine()
-    Session = sessionmaker(bind=engine)
+    Session = scoped_session(sessionmaker(bind=engine))
     session = Session()
     return session
