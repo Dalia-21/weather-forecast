@@ -36,7 +36,12 @@ def get_config(config_file="scrape-config.cfg", log_level=logging.ERROR, option=
     parser = configparser.ConfigParser()
     parser.read(basedir + "/" + config_file)
 
+    # Different order required depending on which variables caller requires
+    # Server has its own logger
     config_vars = dict()
+    if option == "server":
+        config_vars['db'] = parser['DB']['DB_URI']
+        return config_vars
     config_vars['logger'] = get_logger(log_level=log_level, logfile=parser['Settings']['LogFile'])
     if option=="logging":
         return config_vars
