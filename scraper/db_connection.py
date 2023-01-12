@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db_models import MaxTempEntry
 from scraping_tools import get_config
 import logging
 
@@ -16,7 +15,8 @@ def get_engine():
     return engine
 
 
-engine = get_engine()
-Session = sessionmaker(bind=engine)
-session = Session()
-
+def get_session():
+    engine = get_engine()
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return session
