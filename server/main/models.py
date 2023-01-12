@@ -1,15 +1,13 @@
-from server import db
 from flask_login import UserMixin
+#from scraper.db_models import Base
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 
-class User(db.Model, UserMixin):
+class User(Base, UserMixin):
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255))
-    password_hash = db.Column(db.String(255))
-
-
-class WeatherEntry(db.Model):
-    __tablename__ = 'weather_entries'
-    id = db.Column(db.Integer, primary_key=True)
-    entry_date = db.Column(db.String(255))
+    id = Column(Integer, primary_key=True)
+    username = Column(String(255))
+    password_hash = Column(String(255))
