@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, redirect,\
-    current_app, abort
+    current_app, abort, request
 import os
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import check_password_hash
@@ -12,8 +12,9 @@ from server import login_manager
 from scraper.scraping_tools import get_files, get_xml
 from server import Session
 from scraper.db_tools import get_table_type
+import json
+import plotly
 import plotly.graph_objects as go
-from plotly.offline import plot
 
 
 @bp.route('/')
@@ -25,7 +26,7 @@ def index():
     return render_template('index.html', files=files)
 
 
-@bp.route('/<file_url>')
+@bp.route('/file/<file_url>')
 @login_required
 def view_file(file_url):
     # All file_urls follow the format 'dd-dd-dddd' (only 1 d for single digit dates)
@@ -46,16 +47,57 @@ def view_file(file_url):
     return render_template('weather_file.html', filename=filename, data=data)
 
 
-@bp.route('/graphs/<data_type>', methods=['GET', 'POST'])
-@login_required
-def view_graph(data_type):
+def get_line(entries, line_type):
+    if line_type == "oldest":
+        return [entry.oldest_data for entry in entries]
+    elif line_type == "latest":
+        return [entry.latest_data for entry in entries]
+    elif line_type == "delta":
+        return [entry.latest_data - entry.oldest_data for entry in entries]
+    else:
+        return []
+
+
+def get_graph(request_data=None):
+    lines = []
+    if not request_data:
+        data_type = "max_temp"
+        lines.append("delta")
+    else:
+        data_type = request_data['data_type']
+        if request_data['oldest']:
+            lines.append("oldest")
+        if request_data['latest']:
+            lines.append("latest")
+        if request_data['delta']:
+            lines.append("delta")
+
     table = get_table_type(data_type)
-    entries = Session.query(table).order_by(table.date).all()
-    dates = [entry.date for entry in entries[:-6]]
-    data = [entry.latest_data - entry.oldest_data for entry in entries[:-6]]
-    fig = go.Figure([go.Scatter(x=dates, y=data)])
-    html_figure = plot(fig, include_plotlyjs=True, output_type='div')
-    return render_template('graphs/graph.html', html_figure=html_figure)
+    row_limit = Session.query(table).order_by(table.date).count() - 6
+    entries = Session.query(table).order_by(table.date).limit(row_limit)
+    dates = [entry.date for entry in entries]
+
+    fig = go.Figure(
+        data = [go.Scatter(x=dates, y=get_line(entries, line), name=line.capitalize()) for line in lines],
+        layout = {"xaxis": {"title": "Date"}, "yaxis": {"title": "Forecast"}, "title": data_type.capitalize(),
+                  "height": 800}
+    )
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON
+
+
+@bp.route('/graph', methods=['GET', 'POST'])
+@login_required
+def view_graph():
+    return render_template('graphs/graph.html', graphJSON=get_graph())
+
+
+@bp.route('/callback', methods=['POST'])
+@login_required
+def cb():
+    # Find out what a data frame is
+    current_app.logger.debug(f"JSON request: {request.json}")
+    return get_graph(request.json)
 
 
 @bp.route('/login', methods=['GET', 'POST'])

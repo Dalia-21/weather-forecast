@@ -1,2 +1,49 @@
-<h1>Weather Graph</h1>
-<div>{{ html_figure | safe}}</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script>
+        function cb(dataSelection, oldest, latest, delta) {
+            $.post({
+                type: 'POST',
+                url: "/callback",
+                data: JSON.stringify({'data_type': dataSelection, 'oldest': oldest,
+                'latest': latest, 'delta': delta}),
+                success: function (result) {
+                    Plotly.newPlot('graph', result, {});;
+                },
+                contentType: "application/json",
+                dataType: 'json'
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Weather Graph</h1>
+    <label for="dataTypes">Data types:</label>
+    <select name="dataTypes" id="dataTypes" onchange="cb(this.value, $('#oldest').prop('checked'),
+    $('#latest').prop('checked'), $('#delta').prop('checked'))">
+        <option value="None">Select a Data Type</option>
+        <option value="max_temp">Maximum Temperature</option>
+        <option value="min_temp">Minimum Temperature</option>
+        <option value="rainfall">Rainfall</option>
+        <option value="chance_of_rain">Chance of Rain</option>
+    </select>
+    <input type="checkbox" id="oldest" name="oldest" value="oldest">
+    <label for="oldest">Oldest Data</label>
+    <input type="checkbox" id="latest" name="latest" value="latest">
+    <label for="latest">Latest Data</label>
+    <input type="checkbox" id="delta" name="delta" value="delta">
+    <label for="delta">Difference</label><br>
+    <button type="button" id="reload" onclick="cb($('#dataTypes').val(), $('#oldest').prop('checked'),
+    $('#latest').prop('checked'), $('#delta').prop('checked'))">Reload</button>
+    <div id="graph">{{ html_figure | safe}}</div>
+</body>
+
+<script type="text/javascript">
+    $('#delta').prop('checked', true);
+    g = {{ graphJSON | safe }};
+    Plotly.newPlot('graph', g, {});
+</script>
+</html>
