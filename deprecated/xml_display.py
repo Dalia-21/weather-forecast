@@ -1,6 +1,8 @@
 """Temporary utility for visualising the data contained
-in the weather files."""
-from scraping_tools import get_files, get_xml
+in the weather files.
+This file is now being kept solely as a record of
+the development process."""
+from scraper.scraping_tools import get_files, get_xml
 from datetime import datetime
 import plotly.graph_objects as go
 
@@ -105,8 +107,8 @@ for obj in weather_objects.values():
     y_data.append(obj.indexes[str(lowest_index)][weather_variable] - obj.indexes[str(highest_index)]['max_temp'])
 
 
-from db_models import MaxTempEntry, MinTempEntry, RainfallEntry, ChanceOfRainEntry
-from db_connection import get_session
+from scraper.db_models import MaxTempEntry, MinTempEntry, RainfallEntry, ChanceOfRainEntry
+from scraper.db_connection import get_session
 
 
 session = get_session()
