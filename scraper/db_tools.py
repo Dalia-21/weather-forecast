@@ -107,7 +107,7 @@ def process_entries(period):
     max_temp = period.find('element', type='air_temperature_maximum')
     min_temp = period.find('element', type='air_temperature_minimum')
     rainfall = period.find('element', type='precipitation_range')
-    chance_of_rain = period.find('element', type='probability_of_precipitation')
+    chance_of_rain = period.find('text', type='probability_of_precipitation')
 
     if max_temp:
         max_temp = int(max_temp.string)
@@ -147,7 +147,7 @@ def delete_table_entries(table):
                 session.delete(entry)
                 session.commit()
 
-def delete_entries(table=None):
+def cull_entries(table=None):
     if table:
         delete_table_entries(table)
     else:
@@ -158,4 +158,5 @@ def delete_entries(table=None):
 if __name__ == '__main__':
     logger.debug("Calling main db loop function.")
     add_entries_to_db()
+    cull_entries()
     session.close()

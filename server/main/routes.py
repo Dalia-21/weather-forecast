@@ -4,7 +4,6 @@ import os
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import check_password_hash
 import re
-
 from server.main.main import bp
 from server.main.forms import LoginForm
 from server.main.models import User
@@ -76,9 +75,9 @@ def get_graph(request_data=None):
             lines.append("latest")
         if request_data['delta']:
             lines.append("delta")
-
     table = get_table_type(data_type)
     current_app.logger.debug(f"Data type: {data_type}")
+
     row_limit = Session.query(table).order_by(table.date).count() - 6
     entries = Session.query(table).order_by(table.date).limit(row_limit)
     dates = [entry.date for entry in entries]
@@ -101,7 +100,6 @@ def view_graph():
 @bp.route('/callback', methods=['POST'])
 @login_required
 def cb():
-    # Find out what a data frame is
     current_app.logger.debug(f"JSON request: {request.json}")
     return get_graph(request.json)
 

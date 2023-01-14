@@ -11,6 +11,6 @@
     <p>{{ period.attrs['start-time-local'] }}</p>
     <p>Min: {{ period.find('element', type='air_temperature_minimum').string }}</p>
     <p>Max: {{ period.find('element', type='air_temperature_maximum').string }}</p>
-    <p>Rainfall: {{ period.find('text', type='probability_of_precipitation').string }}</p>
+    <p>Chance of rain: {{ period.find('text', type='probability_of_precipitation').string }}</p>
     <p>Description: {{ period.find('text', type='precis').string }}</p>
 {% endfor %}
