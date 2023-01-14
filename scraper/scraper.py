@@ -5,8 +5,8 @@ import urllib.request
 import urllib.error
 from contextlib import closing
 
-from db_tools import add_entries_to_db
-from scraping_tools import get_config
+from scraper.db_tools import add_entries_to_db
+from scraper.scraping_tools import get_config
 import argparse
 
 
