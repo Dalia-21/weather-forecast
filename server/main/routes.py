@@ -59,12 +59,17 @@ def get_line(entries, line_type):
 
 
 def get_graph(request_data=None):
+    data_titles = {'max_temp': "Maximum Temperature", 'min_temp': "Minimum Temperature",
+                   'rainfall': "Rainfall", 'chance_of_rain': "Chance of Rain"}
     lines = []
     if not request_data:
         data_type = "max_temp"
         lines.append("delta")
     else:
-        data_type = request_data['data_type']
+        if request_data['data_type'] == 'None':
+            data_type = "max_temp"
+        else:
+            data_type = request_data['data_type']
         if request_data['oldest']:
             lines.append("oldest")
         if request_data['latest']:
@@ -73,13 +78,14 @@ def get_graph(request_data=None):
             lines.append("delta")
 
     table = get_table_type(data_type)
+    current_app.logger.debug(f"Data type: {data_type}")
     row_limit = Session.query(table).order_by(table.date).count() - 6
     entries = Session.query(table).order_by(table.date).limit(row_limit)
     dates = [entry.date for entry in entries]
 
     fig = go.Figure(
         data = [go.Scatter(x=dates, y=get_line(entries, line), name=line.capitalize()) for line in lines],
-        layout = {"xaxis": {"title": "Date"}, "yaxis": {"title": "Forecast"}, "title": data_type.capitalize(),
+        layout = {"xaxis": {"title": "Date"}, "yaxis": {"title": "Forecast"}, "title": data_titles[data_type],
                   "height": 800}
     )
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
