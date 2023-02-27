@@ -13,6 +13,18 @@ class User(Base, UserMixin):
 
 
 if __name__ == '__main__':
-    from scraper.db_connection import get_engine
+    from scraper.db_connection import get_engine, get_session
+    from werkzeug.security import generate_password_hash
+    print("Creating user table...")
     engine = get_engine()
     Base.metadata.create_all(engine)
+    print("Creating new user...")
+    session = get_session()
+    u = User()
+    username = input("Enter a username: ")
+    password = input("Enter a password: ")
+    u.username = username
+    u.password_hash = generate_password_hash(password)
+    session.add(u)
+    session.commit()
+    print("User added to database.")
