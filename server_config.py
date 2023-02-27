@@ -16,3 +16,4 @@ class Config(object):
         DEBUG_MODE = bool(env['FLASK_DEBUG'])
     else:
         DEBUG_MODE = False
+    BASEDIR = basedir
