@@ -52,7 +52,16 @@ def get_line(entries, line_type):
     elif line_type == "latest":
         return [entry.latest_data for entry in entries]
     elif line_type == "delta":
-        return [entry.latest_data - entry.oldest_data for entry in entries]
+        try:
+            return [entry.latest_data - entry.oldest_data for entry in entries]
+        except TypeError:
+            delta_entries = []
+            for entry in entries:
+                if not entry.oldest_data and entry.latest_data:
+                    current_app.logger.error(f"Entry for date {entry.date} causes type error. ENTRY: {entry.date}")
+                else:
+                    delta_entries.append(entry.latest_data - entry.oldest_data)
+            return delta_entries
     else:
         return []
 
