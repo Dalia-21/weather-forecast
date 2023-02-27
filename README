@@ -18,4 +18,4 @@ Config follows the standard format for integrating with the config parser in Pyt
 
 ## Setup
 Edit the scraper config file. This file contains several parameters, some of which include a filepath. Edit any parameters contained in angle brackets. Then change the name of the file from scrape-config-template.cfg to scrape-config.cfg. This will ensure that config is setup for the scraper package, as well as for any tools in this package which are used by the server package.
-Run the db models script to create the models in the database. Run the models script in the server package in order to create the User table in the database. Then use the shell to create a user in the database. You will need to manually specify the username and create a password hash using werkzeug.security.generate_password_hash.
+Run the db models script to create the models in the database. Run the models script in the server package in order to create the User table in the database. The username and password for the user can be entered at the prompts.
