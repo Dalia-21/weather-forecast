@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-#from scraper.db_models import Base
+# from scraper.db_models import Base
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 

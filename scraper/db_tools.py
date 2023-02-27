@@ -147,6 +147,7 @@ def delete_table_entries(table):
                 session.delete(entry)
                 session.commit()
 
+
 def cull_entries(table=None):
     if table:
         delete_table_entries(table)

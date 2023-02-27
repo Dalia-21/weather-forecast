@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import urllib.request
 import urllib.error
 from contextlib import closing
+import xml
 
 from scraper.db_tools import add_entries_to_db
 from scraper.scraping_tools import get_config
