@@ -1,3 +1,4 @@
+# About
 This is a personal project to study the accuracy of the Australian Burea of Meteorology's 7 day forecast data.
 This project will be studying metrics such as the difference between predictions and actual weather data as reported on the day by the BOM.
 The purpose of the project is to allow me to personally assess the forecast data to see how much I can rely on it as an advance prediction.
@@ -6,5 +7,15 @@ While others can clone this code and perform their own studies, the intent of th
 Having made this disclaimer, the intent of this project is to keep a daily record of the data for my local weather station, provided through the BOM's anonymous public API. I will be using Python to perform comparisons to show the change over 7 days of predictions of temperature, rainfull and chance of precipitation.
 Due to copyright restrictions on BOM data, the results will only be viewable by me through an authenticated web interface. In order to see similar results, others will need to replicate this study themselves.
 
+## Structure
+The project consists of two packages. One of these, the scraper package, contains the scraper script, which retrieves data from the BOM's daily API. This script downloads an XML file from the public FTP API, writes the data for the chosen suburb to a file, and then creates and updates database entries for the dates contained in that file.
+The scraper package also contains all of the code required for interacting with the database, some of which is also used by the other package. This suggests that a different name would be more appropriate for the package, but that is a job for later.
+The other package, the server package, serves a small web application. The application retrieves data from the database and from the saved XML weather files. Access is only permitted to registered users. Since the conditions of use for the BOM data require me to keep the data private, setup involves adding one user to the database manually. No other users can be added.
+This web application displays the names of the files, with hyperlinks to the contents of the files. This is for debugging purposes only. The main content of the application is the graph. This is an interactive graph, which displays the oldest data for each data type for each date, the latest data, and the difference between those. The user can select which datatype and information to view, and this will be requested from the application using AJAX.
+I am considering a future package which will make use of certain techniques to better analyse this data and look for potential patterns and correlations, but I haven't yet worked out the details for this.
 Program structure so far consists of a config file and the main scraper function. The config contains the link to the BOM API, together with the parameters required to get the data for my local area and save it to the server on which the script is running.
 Config follows the standard format for integrating with the config parser in Python. The necessary parameters can be seen in the scraper file, and the URL can be obtained from the 'precis' section of the BOM API.
+
+## Setup
+Create the config file. This requires certain parameters, which I will outline later.
+Create the user in the database. Run the db models script to create the models in the database.
