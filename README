@@ -17,5 +17,5 @@ Program structure so far consists of a config file and the main scraper function
 Config follows the standard format for integrating with the config parser in Python. The necessary parameters can be seen in the scraper file, and the URL can be obtained from the 'precis' section of the BOM API.
 
 ## Setup
-Create the config file. This requires certain parameters, which I will outline later.
-Create the user in the database. Run the db models script to create the models in the database.
+Edit the scraper config file. This file contains several parameters, some of which include a filepath. Edit any parameters contained in angle brackets. Then change the name of the file from scrape-config-template.cfg to scrape-config.cfg. This will ensure that config is setup for the scraper package, as well as for any tools in this package which are used by the server package.
+Run the db models script to create the models in the database. Run the models script in the server package in order to create the User table in the database. Then use the shell to create a user in the database. You will need to manually specify the username and create a password hash using werkzeug.security.generate_password_hash.
